@@ -1,9 +1,9 @@
-# websocket manager
+# websocket client
 
-Websocket management center based on gorilla/websocket.
+websocket client for [gorilla/websocket](https://github.com/gorilla/websocket).
 
 ```
-go get github.com/404669366/wsManager@latest
+go get github.com/404669366/wsclient@latest
 ```
 
 ```golang
