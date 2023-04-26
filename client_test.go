@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestBind(t *testing.T) {
+func TestMount(t *testing.T) {
 	server := gin.Default()
 
 	upGrader := websocket.Upgrader{
