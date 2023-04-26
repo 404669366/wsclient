@@ -41,10 +41,10 @@ func (c *Client) run() {
 	ctx, c.cancel = context.WithCancel(context.Background())
 	go c.writer(ctx)
 	go c.reader(ctx)
-	go c.events.OnConnect(c)
 }
 
 func (c *Client) reader(ctx context.Context) {
+	c.events.OnConnect(c)
 	for {
 		select {
 		case <-ctx.Done():
