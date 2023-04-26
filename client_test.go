@@ -1,23 +1,13 @@
-# websocket client
-
-websocket client for [gorilla/websocket](https://github.com/gorilla/websocket).
-
-```
-go get github.com/404669366/wsclient@latest
-```
-
-```golang
-package main
+package wsclient
 
 import (
-	"fmt"
-	"github.com/404669366/wsclient"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"
+	"testing"
 )
 
-func main() {
+func TestBind(t *testing.T) {
 	server := gin.Default()
 
 	upGrader := websocket.Upgrader{
@@ -27,13 +17,11 @@ func main() {
 			return true
 		},
 	}
-	
+
 	server.GET("/ws", func(ctx *gin.Context) {
 		conn, _ := upGrader.Upgrade(ctx.Writer, ctx.Request, nil)
-		wsclient.Mount(conn)
+		Mount(conn)
 	})
 
 	_ = server.Run(":8080")
 }
-
-```
