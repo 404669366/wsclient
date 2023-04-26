@@ -20,7 +20,7 @@ type Client struct {
 
 type Set func(client *Client)
 
-func Mount(conn *websocket.Conn, sets ...Set) *Client {
+func Mount(conn *websocket.Conn, sets ...Set) {
 	client := &Client{
 		conn:         conn,
 		lock:         &sync.RWMutex{},
@@ -33,7 +33,6 @@ func Mount(conn *websocket.Conn, sets ...Set) *Client {
 	}
 	client.sends = make(chan []byte, client.writerBuffer)
 	client.run()
-	return client
 }
 
 func (c *Client) run() {
@@ -41,10 +40,10 @@ func (c *Client) run() {
 	ctx, c.cancel = context.WithCancel(context.Background())
 	go c.writer(ctx)
 	go c.reader(ctx)
+	go c.events.OnConnect(c)
 }
 
 func (c *Client) reader(ctx context.Context) {
-	c.events.OnConnect(c)
 	for {
 		select {
 		case <-ctx.Done():
@@ -100,10 +99,14 @@ func (c *Client) Send(msg []byte) {
 }
 
 func (c *Client) SetId(id int64) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
 	c.id = id
 }
 
 func (c *Client) GetId() int64 {
+	c.lock.RLock()
+	defer c.lock.RUnlock()
 	return c.id
 }
 
@@ -115,6 +118,12 @@ func (c *Client) IsClosed() bool {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
 	return c.isClosed
+}
+
+func SetId(id int64) Set {
+	return func(client *Client) {
+		client.id = id
+	}
 }
 
 func SetEvents(events EventsInterface) Set {
