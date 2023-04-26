@@ -41,7 +41,7 @@ func (c *Client) run() {
 	ctx, c.cancel = context.WithCancel(context.Background())
 	go c.writer(ctx)
 	go c.reader(ctx)
-	c.events.OnConnect(c)
+	go c.events.OnConnect(c)
 }
 
 func (c *Client) reader(ctx context.Context) {
